@@ -57,61 +57,6 @@ Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// rokes animation
-function RocksAnimation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
-    this.spriteSheet = spriteSheet;
-    this.startX = startX;
-    this.startY = startY;
-    this.frameWidth = frameWidth;
-    this.frameDuration = frameDuration;
-    this.frameHeight = frameHeight;
-    this.frames = frames;
-    this.totalTime = frameDuration * frames;
-    this.elapsedTime = 0;
-    this.loop = loop;
-    this.reverse = reverse;
-}
-
-RocksAnimation.prototype.drawFrame = function (tick, ctx, x, y) { // wall arg added ???
-    var frame = this.currentFrame();
-    this.elapsedTime += tick;
-    if (this.loop) {
-        if (this.isDone()) {
-            this.elapsedTime = 0;
-        }
-    } else if (this.isDone()) {
-        return;
-    }
-    var index = 0;
-    var vindex = 0;
-
-
-    frame = 56 - this.currentFrame();
-    index = frame % 7;
-    vindex = Math.floor(frame / 8);
-
-    var locX = x;
-    var locY = y;
-
-    var offset = vindex === 0 ? this.startX : 0;
-
-    ctx.drawImage(this.spriteSheet,
-                  index * this.frameWidth, vindex * this.frameHeight + this.startY,  // source from sheet
-                  this.frameWidth, this.frameHeight,
-                  locX, locY,
-                  this.frameWidth,
-                  this.frameHeight);
-}
-
-RocksAnimation.prototype.currentFrame = function () {
-    return Math.floor(this.elapsedTime / this.frameDuration);
-}
-
-RocksAnimation.prototype.isDone = function () {
-    return (this.elapsedTime >= this.totalTime);
-}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // test
 function Animation9(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
     this.spriteSheet = spriteSheet;
@@ -172,7 +117,6 @@ Animation9.prototype.isDone = function () {
 
 function Background(game) {
     this.animation = new Animation(ASSET_MANAGER.getAsset("./img/bg.png"), 0, 0, 768, 520, 100, 1, true, false);
-
 
 
     Entity.call(this, game, 0, 0);
@@ -250,16 +194,11 @@ EnemyAnimation.prototype.isDone = function () {
 }
 // create enemy1.
 function Enemy(game) {
-    this.animation = new EnemyAnimation(ASSET_MANAGER.getAsset("./img/enemy1.png"), 0, 0, 59, 27, 100, 1, true, true); // 61, 75, 0.1, 4, true, true);
-    this.kickAnimation = new EnemyAnimation(ASSET_MANAGER.getAsset("./img/chunli.png"), 0, 0, 150, 136, 0.1, 7, true, false);
-    this.jumpAnimation = new EnemyAnimation(ASSET_MANAGER.getAsset("./img/chunli.png"), 0, 0, 150, 136, 0.2, 1, true, false);
-    this.jumping = false;
-    this.radius = 100;
-    this.ground = 400;
+    this.animation = new EnemyAnimation(ASSET_MANAGER.getAsset("./img/enemy1.png"), 0, 0, 59, 27, 100, 1, true, true); 
 
-    this.reset = 0;
     this.randomY = 5;
     this.randomX = 22;
+    this.wall = 0;
     Entity.call(this, game, 300, 450);
 }
 
@@ -267,15 +206,20 @@ Enemy.prototype = new Entity();
 Enemy.prototype.constructor = Enemy;
 
 Enemy.prototype.update = function () {
+    if (this.wall === 0)
+        this.x += 5;
+    else this.x -= 5;
 
-
+    if (this.x >= 700)
+        this.wall = 1;
+    if (this.x <= 0)
+        this.wall = 0;
+    
     if (this.reset && this.x < 650 && this.x >= 0) {
         this.x += this.randomX;
         this.reset = 0;
     }
-    // else
-    //  this.x -= this.randomX;
-
+ 
     this.y += this.randomY;
 
     if (this.y > 600) {
@@ -312,12 +256,7 @@ Enemy.prototype.draw = function (ctx) {
 
 // Enemy2
 function Enemy2(game) {
-    this.animation = new EnemyAnimation(ASSET_MANAGER.getAsset("./img/enemy2.png"), 0, 0, 59, 32, 100, 1, true, true); // 61, 75, 0.1, 4, true, true);
-    this.kickAnimation = new EnemyAnimation(ASSET_MANAGER.getAsset("./img/chunli.png"), 0, 0, 150, 136, 0.1, 7, true, false);
-    this.jumpAnimation = new EnemyAnimation(ASSET_MANAGER.getAsset("./img/chunli.png"), 0, 0, 150, 136, 0.2, 1, true, false);
-    this.jumping = false;
-    this.radius = 100;
-    this.ground = 400;
+    this.animation = new EnemyAnimation(ASSET_MANAGER.getAsset("./img/enemy2.png"), 0, 0, 59, 32, 100, 1, true, true);
 
     this.reset = 1;
     this.randomY = 5;
@@ -356,12 +295,7 @@ Enemy2.prototype.draw = function (ctx) {
 
 // enemy3
 function Enemy3(game) {
-    this.animation = new EnemyAnimation(ASSET_MANAGER.getAsset("./img/enemy3.png"), 0, 0, 42, 28, 100, 1, true, true); // 61, 75, 0.1, 4, true, true);
-    this.kickAnimation = new EnemyAnimation(ASSET_MANAGER.getAsset("./img/chunli.png"), 0, 0, 150, 136, 0.1, 7, true, false);
-    this.jumpAnimation = new EnemyAnimation(ASSET_MANAGER.getAsset("./img/chunli.png"), 0, 0, 150, 136, 0.2, 1, true, false);
-    this.jumping = false;
-    this.radius = 100;
-    this.ground = 400;
+    this.animation = new EnemyAnimation(ASSET_MANAGER.getAsset("./img/enemy3.png"), 0, 0, 42, 28, 100, 1, true, true);
 
     this.reset = 1;
     this.randomY = 6;
@@ -397,42 +331,7 @@ Enemy3.prototype.draw = function (ctx) {
 
     Entity.prototype.draw.call(this);
 }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// meteor "rocks" animation
-function Metero(game) {
-    this.animation = new RocksAnimation(ASSET_MANAGER.getAsset("./img/meteor.png"), 0, 0, 50, 50, .10, 56, true, true);
-    this.radius = 50;
-    var newX = Math.random() * 800;
-    var newY = 0;
-    Entity.call(this, game, newX, newY);
-}
 
-Metero.prototype = new Entity();
-Metero.prototype.constructor = Metero;
-
-Metero.prototype.update = function () {
-
-    this.y += 1;
-
-    if (this.y > 600) {
-        this.y = 0;
-        
-    }
-    this.x += 1;
-    if (this.x > 800) {
-       this.x = Math.random() * 800;
-       this.y = 0;
-    }
-    Entity.prototype.update.call(this);
-}
-
-Metero.prototype.draw = function (ctx) {
-
-    this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
-
-    Entity.prototype.draw.call(this);
-}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Background.prototype = new Entity();
 Background.prototype.constructor = Background;
 
@@ -477,19 +376,19 @@ Score.prototype.draw = function (ctx) {
 }
 
 // bar
-function Wood(game) {
+function Score(game) {
     this.animation = new Animation(ASSET_MANAGER.getAsset("./img/score.png"), 0, 0, 133, 43, 100, 1, true, false);
     Entity.call(this, game, 0, 0);
     // this.radius = 200;
 }
 
-Wood.prototype = new Entity();
-Wood.prototype.constructor = Wood;
+Score.prototype = new Entity();
+Score.prototype.constructor = Score;
 
-Wood.prototype.update = function () {
+Score.prototype.update = function () {
 }
 
-Wood.prototype.draw = function (ctx) {
+Score.prototype.draw = function (ctx) {
 
     // this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
     ctx.drawImage(ASSET_MANAGER.getAsset("./img/score.png"), 10, 10);
@@ -502,12 +401,107 @@ Wood.prototype.draw = function (ctx) {
 }
 
 
+///
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// rokes animation
+function RocksAnimation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
+    this.spriteSheet = spriteSheet;
+    this.startX = startX;
+    this.startY = startY;
+    this.frameWidth = frameWidth;
+    this.frameDuration = frameDuration;
+    this.frameHeight = frameHeight;
+    this.frames = frames;
+    this.totalTime = frameDuration * frames;
+    this.elapsedTime = 0;
+    this.loop = loop;
+    this.reverse = reverse;
+}
+
+RocksAnimation.prototype.drawFrame = function (tick, ctx, x, y) { // wall arg added ???
+    var frame = this.currentFrame();
+    this.elapsedTime += tick;
+    if (this.loop) {
+        if (this.isDone()) {
+            this.elapsedTime = 0;
+        }
+    } else if (this.isDone()) {
+        return;
+    }
+    var index = 0;
+    var vindex = 0;
 
 
-function Unicorn(game) {
+    frame = 56 - this.currentFrame();
+    index = frame % 7;
+    vindex = Math.floor(frame / 8);
+
+    var locX = x;
+    var locY = y;
+
+    var offset = vindex === 0 ? this.startX : 0;
+
+    ctx.drawImage(this.spriteSheet,
+                  index * this.frameWidth, vindex * this.frameHeight + this.startY,  // source from sheet
+                  this.frameWidth, this.frameHeight,
+                  locX, locY,
+                  this.frameWidth,
+                  this.frameHeight);
+    RocksAnimation.prototype.currentFrame = function () {
+        return Math.floor(this.elapsedTime / this.frameDuration);
+    }
+
+    RocksAnimation.prototype.isDone = function () {
+        return (this.elapsedTime >= this.totalTime);
+    }
+
+
+
+// meteor "rocks" animation
+function Metero(game) {
+    this.animation = new RocksAnimation(ASSET_MANAGER.getAsset("./img/meteor.png"), 0, 0, 50, 50, .10, 56, true, true);
+    this.radius = 50;
+    var newX = Math.random() * 800;
+    var newY = 0;
+    Entity.call(this, game, newX, newY);
+}
+
+Metero.prototype = new Entity();
+Metero.prototype.constructor = Metero;
+
+Metero.prototype.update = function () {
+
+    this.y += 1;
+
+    if (this.y > 600) {
+        this.y = 0;
+
+    }
+    this.x += 1;
+    if (this.x > 800) {
+        this.x = Math.random() * 800;
+        this.y = 0;
+    }
+    Entity.prototype.update.call(this);
+}
+
+Metero.prototype.draw = function (ctx) {
+
+    this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+
+    Entity.prototype.draw.call(this);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///
+
+
+
+function MainCraft(game) {
     this.animation = new Animation(ASSET_MANAGER.getAsset("./img/test3.png"), 0, 0, 61, 75, 0.1, 4, true, true);
-    this.kickAnimation = new Animation(ASSET_MANAGER.getAsset("./img/chunli.png"), 0, 0, 150, 136, 0.1, 7, true, false);
-    this.jumpAnimation = new Animation(ASSET_MANAGER.getAsset("./img/chunli.png"), 0, 0, 150, 136, 0.2, 1, true, false);
     this.jumping = false;
     this.radius = 100;
     this.ground = 400;
@@ -519,10 +513,10 @@ function Unicorn(game) {
     Entity.call(this, game, 350, 500);
 }
 
-Unicorn.prototype = new Entity();
-Unicorn.prototype.constructor = Unicorn;
+MainCraft.prototype = new Entity();
+MainCraft.prototype.constructor = MainCraft;
 
-Unicorn.prototype.update = function () {
+MainCraft.prototype.update = function () {
     if (this.game.space && this.y > 0)
         this.y -= 10;
     if (this.game.right && this.x < 730)
@@ -540,7 +534,7 @@ Unicorn.prototype.update = function () {
     Entity.prototype.update.call(this);
 }
 
-Unicorn.prototype.draw = function (ctx) {
+MainCraft.prototype.draw = function (ctx) {
     if (this.jumping) {
         this.jumpAnimation.drawFrame(this.game.clockTick, ctx, this.x + 17, this.y - 34, 0, this.wall, this.freeze, this.slide, this.kick);
 
@@ -555,12 +549,7 @@ Unicorn.prototype.draw = function (ctx) {
 
 // flash bullet
 function Flash(game) {
-    this.animation = new Animation9(ASSET_MANAGER.getAsset("./img/bullet2.png"), 0, 0, 37, 100, 0.07, 6, true, true); // 61, 75, 0.1, 4, true, true);
-    this.kickAnimation = new Animation9(ASSET_MANAGER.getAsset("./img/chunli.png"), 0, 0, 150, 136, 0.1, 7, true, false);
-    this.jumpAnimation = new Animation9(ASSET_MANAGER.getAsset("./img/chunli.png"), 0, 0, 150, 136, 0.2, 1, true, false);
-    this.jumping = false;
-    this.radius = 100;
-    this.ground = 400;
+    this.animation = new Animation9(ASSET_MANAGER.getAsset("./img/bullet2.png"), 0, 0, 37, 100, 0.07, 6, true, true); 
 
     this.reset = 1;
     Entity.call(this, game, 300, 450);
@@ -570,6 +559,7 @@ Flash.prototype = new Entity();
 Flash.prototype.constructor = Flash;
 
 Flash.prototype.update = function () {
+
     // this.x = this.game.entities[1].x;
     // this.y = this.game.entities[1].y;
     if (this.y <= -100) {
@@ -579,15 +569,15 @@ Flash.prototype.update = function () {
         //}
         this.game.shoot = null;
         this.reset = 1;
-        this.x = this.game.entities[6].x + 12;
-        this.y = this.game.entities[6].y - 40;
+        this.x = this.game.entities[7].x + 12;
+        this.y = this.game.entities[7].y - 40;
         //     this.reset = 1;
     }
     if (this.game.shoot) {
 
         if (this.reset === 1) {
-            this.x = this.game.entities[6].x + 12;
-            this.y = this.game.entities[6].y - 40;
+            this.x = this.game.entities[7].x + 12;
+            this.y = this.game.entities[7].y - 40;
             this.reset = 0;
         }
 
@@ -661,8 +651,8 @@ AnimationBG.prototype.isDone = function () {
 
 // scrolling background
 function ScrollBG(game) {
-    this.animation = new AnimationBG(ASSET_MANAGER.getAsset("./img/fullBG.png"), 0, 0, 800, 1600, 5, 1, true, true);
-    Entity.call(this, game, 0, -800);
+    this.animation = new AnimationBG(ASSET_MANAGER.getAsset("./img/bg1.png"), 0, 0, 800, 600, 5, 1, true, true);
+    Entity.call(this, game, 0, 0);
 }
 
 ScrollBG.prototype = new Entity();
@@ -671,8 +661,8 @@ ScrollBG.prototype.constructor = ScrollBG;
 ScrollBG.prototype.update = function () {
 
     this.y += 1;
-    if (this.y >= 0) {
-        this.y = -800;
+    if (this.y >= 600) {
+        this.y = -600;
     }
     
 
@@ -687,8 +677,8 @@ ScrollBG.prototype.draw = function (ctx) {
 }
 // 2nd bacground
 function ScrollBG1(game) {
-    this.animation = new AnimationBG(ASSET_MANAGER.getAsset("./img/bg.png"), 0, 0, 800, 838, 5, 1, true, true);
-    Entity.call(this, game, 0, -1038);
+    this.animation = new AnimationBG(ASSET_MANAGER.getAsset("./img/bg2.png"), 0, 0, 800, 600, 5, 1, true, true);
+    Entity.call(this, game, 0, -600);
 }
 
 ScrollBG1.prototype = new Entity();
@@ -697,8 +687,8 @@ ScrollBG1.prototype.constructor = ScrollBG;
 ScrollBG1.prototype.update = function () {
 
     this.y += 1;
-    if (this.y >= 300) {
-        this.y = -1038;
+    if (this.y >= 600) {
+        this.y = -600;
     }
 
 
@@ -716,8 +706,8 @@ ScrollBG1.prototype.draw = function (ctx) {
 
 var ASSET_MANAGER = new AssetManager();
 
-ASSET_MANAGER.queueDownload("./img/fullBG.png");
-ASSET_MANAGER.queueDownload("./img/space1.png");
+ASSET_MANAGER.queueDownload("./img/bg1.png");
+ASSET_MANAGER.queueDownload("./img/bg2.png");
 ASSET_MANAGER.queueDownload("./img/score.png");
 ASSET_MANAGER.queueDownload("./img/chunli.png");
 ASSET_MANAGER.queueDownload("./img/test3.png");
@@ -725,8 +715,6 @@ ASSET_MANAGER.queueDownload("./img/bullet2.png");
 ASSET_MANAGER.queueDownload("./img/enemy1.png");
 ASSET_MANAGER.queueDownload("./img/enemy2.png");
 ASSET_MANAGER.queueDownload("./img/enemy3.png");
-ASSET_MANAGER.queueDownload("./img/meteor_small.png");
-ASSET_MANAGER.queueDownload("./img/meteor.png");
 
 
 ASSET_MANAGER.downloadAll(function () {
@@ -738,8 +726,8 @@ ASSET_MANAGER.downloadAll(function () {
 
     var flash = new Flash(gameEngine);
     //var bg = new Background(gameEngine);
-    var wood = new Wood(gameEngine);
-    var unicorn = new Unicorn(gameEngine);
+    var score = new Score(gameEngine);
+    var mainCraft = new MainCraft(gameEngine);
     var score = new Score(gameEngine);
 
     // enemy spaceship
@@ -749,22 +737,23 @@ ASSET_MANAGER.downloadAll(function () {
 
     // background
    // var bg = new ScrollBG1(gameEngine);
-    var bg = new ScrollBG(gameEngine);
-  // rocks
+    var bg1 = new ScrollBG(gameEngine);
+    var bg2 = new ScrollBG1(gameEngine);
+
+    // rocks
     var rock1 = new Metero(gameEngine);
     var rock2 = new Metero(gameEngine);
-    
-    
-    gameEngine.addEntity(bg);
+
+    gameEngine.addEntity(bg1);
+    gameEngine.addEntity(bg2);
     gameEngine.addEntity(rock1);
     gameEngine.addEntity(rock2);
     gameEngine.addEntity(enemy);
     gameEngine.addEntity(enemy2);
     gameEngine.addEntity(enemy3);
-    gameEngine.addEntity(unicorn);
+    gameEngine.addEntity(mainCraft);
     gameEngine.addEntity(flash);
-    gameEngine.addEntity(wood);
-    
+    gameEngine.addEntity(score);
 
     gameEngine.init(ctx);
     gameEngine.start();
