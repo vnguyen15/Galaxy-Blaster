@@ -1,4 +1,4 @@
-
+﻿
 
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
     this.spriteSheet = spriteSheet;
@@ -72,6 +72,7 @@ function Animation9(spriteSheet, startX, startY, frameWidth, frameHeight, frameD
     this.reverse = reverse;
     this.action = 0;
 }
+
 
 Animation9.prototype.drawFrame = function (tick, ctx, x, y, scaleBy, wall, freeze, slide, kick) { // wall arg added ???
     freeze = 1;
@@ -192,6 +193,100 @@ EnemyAnimation.prototype.currentFrame = function () {
 EnemyAnimation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
+
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// rokes animation
+function RocksAnimation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
+    this.spriteSheet = spriteSheet;
+    this.startX = startX;
+    this.startY = startY;
+    this.frameWidth = frameWidth;
+    this.frameDuration = frameDuration;
+    this.frameHeight = frameHeight;
+    this.frames = frames;
+    this.totalTime = frameDuration * frames;
+    this.elapsedTime = 0;
+    this.loop = loop;
+    this.reverse = reverse;
+}
+
+RocksAnimation.prototype.drawFrame = function (tick, ctx, x, y) { // wall arg added ???
+    var frame = this.currentFrame();
+    this.elapsedTime += tick;
+    if (this.loop) {
+        if (this.isDone()) {
+            this.elapsedTime = 0;
+        }
+    } else if (this.isDone()) {
+        return;
+    }
+    var index = 0;
+    var vindex = 0;
+
+
+    frame = 56 - this.currentFrame();
+    index = frame % 7;
+    vindex = Math.floor(frame / 8);
+
+    var locX = x;
+    var locY = y;
+
+    var offset = vindex === 0 ? this.startX : 0;
+
+    ctx.drawImage(this.spriteSheet,
+                  index * this.frameWidth, vindex * this.frameHeight + this.startY,  // source from sheet
+                  this.frameWidth, this.frameHeight,
+                  locX, locY,
+                  this.frameWidth,
+                  this.frameHeight);
+}
+
+RocksAnimation.prototype.currentFrame = function () {
+    return Math.floor(this.elapsedTime / this.frameDuration);
+}
+
+RocksAnimation.prototype.isDone = function () {
+    return (this.elapsedTime >= this.totalTime);
+}
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// meteor "rocks" animation
+function Metero(game) {
+    this.animation = new RocksAnimation(ASSET_MANAGER.getAsset("./img/meteor.png"), 0, 0, 50, 50, .10, 56, true, true);
+    this.radius = 50;
+    var newX = Math.random() * 800;
+    var newY = 0;
+    Entity.call(this, game, newX, newY);
+}
+
+Metero.prototype = new Entity();
+Metero.prototype.constructor = Metero;
+
+Metero.prototype.update = function () {
+
+    this.y += 1;
+
+    if (this.y > 600) {
+        this.y = 0;
+
+    }
+    this.x += 1;
+    if (this.x > 800) {
+        this.x = Math.random() * 800;
+        this.y = 0;
+    }
+    Entity.prototype.update.call(this);
+}
+
+Metero.prototype.draw = function (ctx) {
+
+    this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+
+    Entity.prototype.draw.call(this);
+}
+///////////////////////////////////////////////////////////////////////////////////////////
+
 // create enemy1.
 function Enemy(game) {
     this.animation = new EnemyAnimation(ASSET_MANAGER.getAsset("./img/enemy1.png"), 0, 0, 59, 27, 100, 1, true, true); 
@@ -399,13 +494,9 @@ Score.prototype.draw = function (ctx) {
     //Entity.prototype.draw.call(this);
 
 }
-
-
-///
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// rokes animation
-function RocksAnimation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
+// Boss animation
+function AnimationB(spriteSheet, startX, startY, frameWidth, frameHeight,
+		           frameDuration, frames, loop, reverse) {
     this.spriteSheet = spriteSheet;
     this.startX = startX;
     this.startY = startY;
@@ -419,8 +510,8 @@ function RocksAnimation(spriteSheet, startX, startY, frameWidth, frameHeight, fr
     this.reverse = reverse;
 }
 
-RocksAnimation.prototype.drawFrame = function (tick, ctx, x, y) { // wall arg added ???
-    var frame = this.currentFrame();
+AnimationB.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) {
+    var scaleBy = scaleBy || 1;
     this.elapsedTime += tick;
     if (this.loop) {
         if (this.isDone()) {
@@ -429,72 +520,67 @@ RocksAnimation.prototype.drawFrame = function (tick, ctx, x, y) { // wall arg ad
     } else if (this.isDone()) {
         return;
     }
-    var index = 0;
+    var index = this.reverse ? this.frames - this.currentFrame() - 1 :
+    	                       this.currentFrame();
     var vindex = 0;
-
-
-    frame = 56 - this.currentFrame();
-    index = frame % 7;
-    vindex = Math.floor(frame / 8);
+    if ((index + 1) * this.frameWidth + this.startX > this.spriteSheet.width) {
+        index -= Math.floor((this.spriteSheet.width - this.startX) / this.frameWidth);
+        vindex++;
+    }
+    while ((index + 1) * this.frameWidth > this.spriteSheet.width) {
+        index -= Math.floor(this.spriteSheet.width / this.frameWidth);
+        vindex++;
+    }
 
     var locX = x;
     var locY = y;
-
     var offset = vindex === 0 ? this.startX : 0;
-
     ctx.drawImage(this.spriteSheet,
-                  index * this.frameWidth, vindex * this.frameHeight + this.startY,  // source from sheet
+                  index * this.frameWidth + offset, vindex * this.frameHeight +
+                  this.startY,  // source from sheet
                   this.frameWidth, this.frameHeight,
                   locX, locY,
-                  this.frameWidth,
-                  this.frameHeight);
-    RocksAnimation.prototype.currentFrame = function () {
-        return Math.floor(this.elapsedTime / this.frameDuration);
-    }
-
-    RocksAnimation.prototype.isDone = function () {
-        return (this.elapsedTime >= this.totalTime);
-    }
-
-
-
-// meteor "rocks" animation
-function Metero(game) {
-    this.animation = new RocksAnimation(ASSET_MANAGER.getAsset("./img/meteor.png"), 0, 0, 50, 50, .10, 56, true, true);
-    this.radius = 50;
-    var newX = Math.random() * 800;
-    var newY = 0;
-    Entity.call(this, game, newX, newY);
+                  this.frameWidth * scaleBy,
+                  this.frameHeight * scaleBy);
 }
 
-Metero.prototype = new Entity();
-Metero.prototype.constructor = Metero;
+AnimationB.prototype.currentFrame = function () {
+    return Math.floor(this.elapsedTime / this.frameDuration);
+}
 
-Metero.prototype.update = function () {
+AnimationB.prototype.isDone = function () {
+    return (this.elapsedTime >= this.totalTime);
+}
 
-    this.y += 1;
+///
+function Boss(game) {
+    this.animation = new AnimationB(ASSET_MANAGER.getAsset(
+    		"./img/boss1.png"), 0, 0, 374, 300, 0.1, 1, true, false);
+    this.right = true;
+    this.up = true;
+    Entity.call(this, game, 100, 0);
+}
 
-    if (this.y > 600) {
-        this.y = 0;
+Boss.prototype = new Entity();
+Boss.prototype.constructor = Boss;
 
-    }
-    this.x += 1;
-    if (this.x > 800) {
-        this.x = Math.random() * 800;
-        this.y = 0;
-    }
+Boss.prototype.update = function () {
+    if (this.x == -200) this.right = true;
+    if (this.x == 600) this.right = false;
+    if (this.y == -100) this.up = false;
+    if (this.y == 200) this.up = true;
+    if (this.right) this.x += 1;
+    else this.x -= 1;
+    if (this.up) this.y -= 1;
+    else this.y += 1;
     Entity.prototype.update.call(this);
 }
 
-Metero.prototype.draw = function (ctx) {
-
+Boss.prototype.draw = function (ctx) {
     this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
-
     Entity.prototype.draw.call(this);
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///
 
@@ -569,15 +655,15 @@ Flash.prototype.update = function () {
         //}
         this.game.shoot = null;
         this.reset = 1;
-        this.x = this.game.entities[7].x + 12;
-        this.y = this.game.entities[7].y - 40;
+        this.x = this.game.entities[8].x + 12;
+        this.y = this.game.entities[8].y - 40;
         //     this.reset = 1;
     }
     if (this.game.shoot) {
 
         if (this.reset === 1) {
-            this.x = this.game.entities[7].x + 12;
-            this.y = this.game.entities[7].y - 40;
+            this.x = this.game.entities[8].x + 12;
+            this.y = this.game.entities[8].y - 40;
             this.reset = 0;
         }
 
@@ -697,10 +783,12 @@ ScrollBG1.prototype.update = function () {
 
 ScrollBG1.prototype.draw = function (ctx) {
 
-    this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0);
+    this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y,0);
 
     Entity.prototype.draw.call(this);
 }
+
+
 
 // the "main" code begins here
 
@@ -715,7 +803,9 @@ ASSET_MANAGER.queueDownload("./img/bullet2.png");
 ASSET_MANAGER.queueDownload("./img/enemy1.png");
 ASSET_MANAGER.queueDownload("./img/enemy2.png");
 ASSET_MANAGER.queueDownload("./img/enemy3.png");
-
+ASSET_MANAGER.queueDownload("./img/boss1.png");
+ASSET_MANAGER.queueDownload("./img/meteor_small.png");
+ASSET_MANAGER.queueDownload("./img/meteor.png");
 
 ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");
@@ -739,7 +829,8 @@ ASSET_MANAGER.downloadAll(function () {
    // var bg = new ScrollBG1(gameEngine);
     var bg1 = new ScrollBG(gameEngine);
     var bg2 = new ScrollBG1(gameEngine);
-
+    // boss
+    var boss1 = new Boss(gameEngine);
     // rocks
     var rock1 = new Metero(gameEngine);
     var rock2 = new Metero(gameEngine);
@@ -748,6 +839,7 @@ ASSET_MANAGER.downloadAll(function () {
     gameEngine.addEntity(bg2);
     gameEngine.addEntity(rock1);
     gameEngine.addEntity(rock2);
+    gameEngine.addEntity(boss1);
     gameEngine.addEntity(enemy);
     gameEngine.addEntity(enemy2);
     gameEngine.addEntity(enemy3);
