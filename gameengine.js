@@ -81,15 +81,19 @@ GameEngine.prototype.startInput = function () {
         e.preventDefault();
     }, false);
 
-    //this.ctx.canvas.addEventListener("keypress", function (e) {
-    //    // if (String.fromCharCode(e.which) === ' ') that.space = true;
-    //    var key = e.keyCode;
-    //    if (key === 83) that.shoot = true;
-    //    //var key = e.keyCode ? e.keyCode : e.which;
+    this.ctx.canvas.addEventListener("keyup", function (e) {
+        // if (String.fromCharCode(e.which) === ' ') that.space = true;
+        var key = e.keyCode;
+        if (key === 38) that.space = false;
+        if (key === 37) that.left = false;
+        if (key === 39) that.right = false;
+        if (key === 40) that.down = false;
+       // if (key === 83) that.shoot = false;
+        //var key = e.keyCode ? e.keyCode : e.which;
 
-    //    //      console.log(e);
-    //    e.preventDefault();
-    //}, false);
+        //      console.log(e);
+        e.preventDefault();
+    }, false);
 
     console.log('Input started');
 }
@@ -130,12 +134,12 @@ GameEngine.prototype.loop = function () {
     this.clockTick = this.timer.tick();
     this.update();
     this.draw();
-    this.space = null;
-    this.right = null;
-    this.left = null;
-    this.down = null;
-    this.diagonal = null;
-    //this.shoot = null;
+   // this.space = null;
+    //this.right = null;
+   // this.left = null;
+   // this.down = null;
+  //  this.diagonal = null;
+   // this.shoot = null;
 }
 
 function Entity(game, x, y) {

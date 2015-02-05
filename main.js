@@ -604,19 +604,14 @@ MainCraft.prototype.constructor = MainCraft;
 
 MainCraft.prototype.update = function () {
     if (this.game.space && this.y > 0)
-        this.y -= 10;
+        this.y -= 6;
     if (this.game.right && this.x < 730)
-        this.x += 10;
+        this.x += 6;
     if (this.game.left && this.x > 0)
-        this.x -= 10;
+        this.x -= 6;
     if (this.game.down && this.y < 520)
-        this.y += 10;
-    if (this.game.diagonal) {
-        this.x += 10;
-        this.y - +10;
-    }
-
-
+        this.y += 6;
+    
     Entity.prototype.update.call(this);
 }
 
