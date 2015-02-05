@@ -1,5 +1,5 @@
 ﻿
-
+// Main space-craft animation
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
     this.spriteSheet = spriteSheet;
     this.startX = startX;
@@ -15,9 +15,7 @@ function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDu
     this.action = 0;
 }
 
-Animation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy, wall, freeze, slide, kick) { // wall arg added ???
-    freeze = 1;
-    wall = 1;
+Animation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) { // wall arg added ???
     var scaleBy = scaleBy || 1;
     var frame = this.currentFrame();
     this.elapsedTime += tick;
@@ -57,8 +55,8 @@ Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
 
-// test
-function Animation9(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
+// Flash bullet animation
+function FlashAnimation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
     this.spriteSheet = spriteSheet;
     this.startX = startX;
     this.startY = startY;
@@ -73,12 +71,9 @@ function Animation9(spriteSheet, startX, startY, frameWidth, frameHeight, frameD
     this.action = 0;
 }
 
-
-Animation9.prototype.drawFrame = function (tick, ctx, x, y, scaleBy, wall, freeze, slide, kick) { // wall arg added ???
-    freeze = 1;
-    wall = 1;
+FlashAnimation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) { 
+  
     var scaleBy = scaleBy || 1;
-
     this.elapsedTime += tick;
     if (this.loop) {
         if (this.isDone()) {
@@ -89,17 +84,13 @@ Animation9.prototype.drawFrame = function (tick, ctx, x, y, scaleBy, wall, freez
     }
     var index = 0;
     var vindex = 0;
-
-
     frame = this.currentFrame();
     index = frame % 6;
     vindex = Math.floor(frame / 6);
 
     var locX = x;
     var locY = y;
-
     var offset = vindex === 0 ? this.startX : 0;
-
     ctx.drawImage(this.spriteSheet,
                   index * this.frameWidth + offset, vindex * this.frameHeight + this.startY,  // source from sheet
                   this.frameWidth, this.frameHeight,
@@ -108,11 +99,11 @@ Animation9.prototype.drawFrame = function (tick, ctx, x, y, scaleBy, wall, freez
                   this.frameHeight * scaleBy);
 }
 
-Animation9.prototype.currentFrame = function () {
+FlashAnimation.prototype.currentFrame = function () {
     return Math.floor(this.elapsedTime / this.frameDuration);
 }
 
-Animation9.prototype.isDone = function () {
+FlashAnimation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
 
@@ -124,15 +115,10 @@ function Background(game) {
     this.radius = 200;
 }
 
-
-
 function Background(game) {
     this.animation = new Animation(ASSET_MANAGER.getAsset("./img/bg.png"), 0, 0, 768, 520, 100, 1, true, false);
 
-
-
     Entity.call(this, game, 0, 0);
-    this.radius = 200;
 }
 
 // animation for enemies spaceships
@@ -152,9 +138,8 @@ function EnemyAnimation(spriteSheet, startX, startY, frameWidth, frameHeight, fr
 }
 
 
-EnemyAnimation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy, wall, freeze, slide, kick) { // wall arg added ???
-    freeze = 1;
-    wall = 1;
+EnemyAnimation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) { // wall arg added ???
+
     var scaleBy = scaleBy || 1;
     var frame = this.currentFrame();
     this.elapsedTime += tick;
@@ -175,9 +160,7 @@ EnemyAnimation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy, wall, f
 
     var locX = x;
     var locY = y;
-
     var offset = vindex === 0 ? this.startX : 0;
-
     ctx.drawImage(this.spriteSheet,
                   index * this.frameWidth + offset, vindex * this.frameHeight + this.startY,  // source from sheet
                   this.frameWidth, this.frameHeight,
@@ -249,7 +232,7 @@ RocksAnimation.prototype.currentFrame = function () {
 RocksAnimation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
-///////////////////////////////////////////////////////////////////////////////////////////
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // meteor "rocks" animation
 function Metero(game) {
@@ -344,7 +327,7 @@ Enemy.prototype.update = function () {
 
 Enemy.prototype.draw = function (ctx) {
 
-    this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0, this.wall, this.freeze, this.slide, this.kick);
+    this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0);
 
     Entity.prototype.draw.call(this);
 }
@@ -383,7 +366,7 @@ Enemy2.prototype.update = function () {
 
 Enemy2.prototype.draw = function (ctx) {
 
-    this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0, this.wall, this.freeze, this.slide, this.kick);
+    this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0);
 
     Entity.prototype.draw.call(this);
 }
@@ -422,7 +405,7 @@ Enemy3.prototype.update = function () {
 
 Enemy3.prototype.draw = function (ctx) {
 
-    this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0, this.wall, this.freeze, this.slide, this.kick);
+    this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0);
 
     Entity.prototype.draw.call(this);
 }
@@ -582,20 +565,11 @@ Boss.prototype.draw = function (ctx) {
 }
 
 
-///
-
-
+// main-craft
 
 function MainCraft(game) {
     this.animation = new Animation(ASSET_MANAGER.getAsset("./img/test3.png"), 0, 0, 61, 75, 0.1, 4, true, true);
-    this.jumping = false;
-    this.radius = 100;
-    this.ground = 400;
-    this.wall = 0;
-    this.freeze = 0;
-    this.slide = 0;
-    this.kick = 0;
-    this.go = 0;
+  
     Entity.call(this, game, 350, 500);
 }
 
@@ -616,21 +590,15 @@ MainCraft.prototype.update = function () {
 }
 
 MainCraft.prototype.draw = function (ctx) {
-    if (this.jumping) {
-        this.jumpAnimation.drawFrame(this.game.clockTick, ctx, this.x + 17, this.y - 34, 0, this.wall, this.freeze, this.slide, this.kick);
 
-    } else if (this.kick) {
-        this.kickAnimation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0, this.wall, this.freeze, this.slide, this.kick);
-
-    } else {
-        this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0, this.wall, this.freeze, this.slide, this.kick);
-    }
+    this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0);
+    
     Entity.prototype.draw.call(this);
 }
 
 // flash bullet
 function Flash(game) {
-    this.animation = new Animation9(ASSET_MANAGER.getAsset("./img/bullet2.png"), 0, 0, 37, 100, 0.07, 6, true, true); 
+    this.animation = new FlashAnimation(ASSET_MANAGER.getAsset("./img/bullet2.png"), 0, 0, 37, 100, 0.07, 6, true, true); 
 
     this.reset = 1;
     Entity.call(this, game, 300, 450);
@@ -731,15 +699,15 @@ AnimationBG.prototype.isDone = function () {
 }
 
 // scrolling background
-function ScrollBG(game) {
+function ScrollBG1(game) {
     this.animation = new AnimationBG(ASSET_MANAGER.getAsset("./img/bg1.png"), 0, 0, 800, 600, 5, 1, true, true);
     Entity.call(this, game, 0, 0);
 }
 
-ScrollBG.prototype = new Entity();
-ScrollBG.prototype.constructor = ScrollBG;
+ScrollBG1.prototype = new Entity();
+ScrollBG1.prototype.constructor = ScrollBG1;
 
-ScrollBG.prototype.update = function () {
+ScrollBG1.prototype.update = function () {
 
     this.y += 1;
     if (this.y >= 600) {
@@ -750,39 +718,38 @@ ScrollBG.prototype.update = function () {
     Entity.prototype.update.call(this);
 }
 
-ScrollBG.prototype.draw = function (ctx) {
+ScrollBG1.prototype.draw = function (ctx) {
 
     this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0);
 
     Entity.prototype.draw.call(this);
 }
+
 // 2nd bacground
-function ScrollBG1(game) {
+function ScrollBG2(game) {
     this.animation = new AnimationBG(ASSET_MANAGER.getAsset("./img/bg2.png"), 0, 0, 800, 600, 5, 1, true, true);
     Entity.call(this, game, 0, -600);
 }
 
-ScrollBG1.prototype = new Entity();
-ScrollBG1.prototype.constructor = ScrollBG;
+ScrollBG2.prototype = new Entity();
+ScrollBG2.prototype.constructor = ScrollBG2;
 
-ScrollBG1.prototype.update = function () {
+ScrollBG2.prototype.update = function () {
 
     this.y += 1;
     if (this.y >= 600) {
         this.y = -600;
     }
 
-
     Entity.prototype.update.call(this);
 }
 
-ScrollBG1.prototype.draw = function (ctx) {
+ScrollBG2.prototype.draw = function (ctx) {
 
     this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y,0);
 
     Entity.prototype.draw.call(this);
 }
-
 
 
 // the "main" code begins here
@@ -822,8 +789,8 @@ ASSET_MANAGER.downloadAll(function () {
 
     // background
    // var bg = new ScrollBG1(gameEngine);
-    var bg1 = new ScrollBG(gameEngine);
-    var bg2 = new ScrollBG1(gameEngine);
+    var bg1 = new ScrollBG1(gameEngine);
+    var bg2 = new ScrollBG2(gameEngine);
     // boss
     var boss1 = new Boss(gameEngine);
     // rocks
@@ -832,9 +799,9 @@ ASSET_MANAGER.downloadAll(function () {
 
     gameEngine.addEntity(bg1);
     gameEngine.addEntity(bg2);
+    gameEngine.addEntity(boss1);
     gameEngine.addEntity(rock1);
     gameEngine.addEntity(rock2);
-    gameEngine.addEntity(boss1);
     gameEngine.addEntity(enemy);
     gameEngine.addEntity(enemy2);
     gameEngine.addEntity(enemy3);
