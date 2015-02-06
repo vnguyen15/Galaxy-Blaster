@@ -772,6 +772,8 @@ ASSET_MANAGER.queueDownload("./img/meteor.png");
 ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");
     var canvas = document.getElementById('gameWorld');
+    canvas.setAttribute('tabindex','0');
+    canvas.focus();
     var ctx = canvas.getContext('2d');
 
     var gameEngine = new GameEngine();
