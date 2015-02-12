@@ -7,7 +7,6 @@ ASSET_MANAGER.queueDownload("./img/bg1.png");
 ASSET_MANAGER.queueDownload("./img/bg2.png");
 ASSET_MANAGER.queueDownload("./img/bg3.png");
 ASSET_MANAGER.queueDownload("./img/score.png");
-ASSET_MANAGER.queueDownload("./img/chunli.png");
 ASSET_MANAGER.queueDownload("./img/test3.png");
 ASSET_MANAGER.queueDownload("./img/bullet2.png");
 ASSET_MANAGER.queueDownload("./img/enemy1.png");
