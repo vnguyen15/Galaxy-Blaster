@@ -40,7 +40,6 @@ function GameEngine() {
     this.right = null;
     this.left = null;
     this.down = null;
-    this.diagonal = null;
     this.lastKeypressTime = 0;
     this.shoot = null;
 }
@@ -88,7 +87,7 @@ GameEngine.prototype.startInput = function () {
         if (key === 37) that.left = false;
         if (key === 39) that.right = false;
         if (key === 40) that.down = false;
-       // if (key === 83) that.shoot = false;
+        if (key === 83) that.shoot = false;
         //var key = e.keyCode ? e.keyCode : e.which;
 
         //      console.log(e);
