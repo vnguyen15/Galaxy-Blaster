@@ -1,4 +1,5 @@
 ﻿
+
 // Main space-craft animation
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
     this.spriteSheet = spriteSheet;
