@@ -390,7 +390,7 @@ FireBallAnimation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy, type
         index = frame % 25;
         vindex = Math.floor(frame / 25);
 
-    } else if (type === 1) {
+    } else if (type === 1 || type === 2) {
         index = frame % 6;
         vindex = Math.floor(frame / 6);
     } else {

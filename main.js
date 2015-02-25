@@ -15,7 +15,7 @@ ASSET_MANAGER.queueDownload("./img/enemy3.png");
 ASSET_MANAGER.queueDownload("./img/boss1.png");
 ASSET_MANAGER.queueDownload("./img/meteor_small.png");
 ASSET_MANAGER.queueDownload("./img/meteor.png");
-ASSET_MANAGER.queueDownload("./img/fireBall1.png");
+ASSET_MANAGER.queueDownload("./img/blueBall1.png");
 ASSET_MANAGER.queueDownload("./img/finalExplosion.png");
 ASSET_MANAGER.queueDownload("./img/explosion2.png");
 ASSET_MANAGER.queueDownload("./img/rocketFull.png");

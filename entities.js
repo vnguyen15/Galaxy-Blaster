@@ -531,7 +531,7 @@ ScrollBG3.prototype.draw = function (ctx) {
 
 // fire ball bullet
 function FireBall(game) {
-    this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/fireBall1.png"), 0, 0, 21, 21, 0.07, 4, true, true);
+    this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/blueBall1.png"), 0, 0, 20, 22, 0.07, 6, true, true);
 
     this.reset = 1;
     this.shoot = 0; // to be sure bullet afer fire have to get off screen after user release shoot button
@@ -633,7 +633,7 @@ FireBall.prototype.draw = function (ctx) {
         this.switchSprite = true;
 
     } else if (!this.explosion && this.switchSprite) {
-        this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/fireBall1.png"), 0, 0, 21, 21, .07, 4, true, true);
+        this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/blueBall1.png"), 0, 0, 20, 22, .07, 6, true, true);
         this.switchSprite = false;
 
     }
@@ -714,11 +714,11 @@ Rocket.prototype.update = function () {
             this.reset = 0;
         }
         if (!this.explosion)
-            this.y -= 10;
+            this.y -= 6;
 
     } else if (this.y > -100 && !this.explosion) {
 
-        this.y -= 10;
+        this.y -= 6;
     }
 
     Entity.prototype.update.call(this);
