@@ -194,32 +194,7 @@ Background.prototype.draw = function (ctx) {
 
 }
 
-// score
-function Scores(game) {
-    // this.animation = new Animation(ASSET_MANAGER.getAsset("./img/bg.png"), 0, 0, 768, 520, 100, 1, true, false);
-    Entity.call(this, game, 0, 0);
-    this.radius = 200;
-}
-Score.prototype = new Entity();
-Score.prototype.constructor = Score;
 
-Score.prototype.update = function () {
-}
-
-Score.prototype.draw = function (ctx) {
-
-    //ctx.font = "bold 80px sans-serif";
-    // while ( true) {
-    //ctx.fillText("xxxx", 248, 43);
-    //ctx.fillText("yxxx", 58, 165);
-    //  }
-    //ctx.fillStyle = "Red";
-    //ctx.fillRect(0, 0, 10, 10);
-    ctx.fillStyle = "SaddleBrown";
-    ctx.fillText("XXXX", 10, 10);
-    Entity.prototype.draw.call(this);
-
-}
 
 // The score and the hp bar
 function Score(game) {
@@ -240,17 +215,17 @@ Score.prototype.update = function () {
 
 Score.prototype.draw = function (ctx) {
 
-    // this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
-    //ctx.drawImage(ASSET_MANAGER.getAsset("./img/score.png"), 10, 10);
     this.ctx = ctx;
     Entity.prototype.draw.call(this);
     ctx.font='bold 20px Arial';
     ctx.fillStyle = "red";
     ctx.fillText("Score : " + this.game.score, 10, 30);
     ctx.fillText("HP  " , 10, 50);
+    if (this.game.hp <= 0) {
+	this.game.hp = 0;
+    }
     ctx.fillRect(50, 35, this.game.hp, 20);
-    //ctx.fillRect(0,515,800,300);
-    //Entity.prototype.draw.call(this);
+    
 
 }
 

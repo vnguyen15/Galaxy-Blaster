@@ -71,11 +71,11 @@ GameEngine.prototype.startInput = function () {
     this.ctx.canvas.addEventListener("keydown", function (e) {
         // if (String.fromCharCode(e.which) === ' ') that.space = true;
         var key = e.keyCode;
-        if (key === 38) {that.space = true; that.hp = that.hp -20;}
+        if (key === 38) that.space = true; 
         if (key === 37) that.left = true; 
         if (key === 39) that.right = true;
         if (key === 40) that.down = true;
-        if (key === 83) that.shoot = true;
+        if (key === 83) {that.shoot = true; that.hp = that.hp -20; that.score+=20;}
         //var key = e.keyCode ? e.keyCode : e.which;
 
 //      console.log(e);
