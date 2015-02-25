@@ -531,7 +531,7 @@ ScrollBG3.prototype.draw = function (ctx) {
 
 // fire ball bullet
 function FireBall(game) {
-    this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/blueBall1.png"), 0, 0, 20, 22, 0.07, 6, true, true);
+    this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/fireBall1.png"), 0, 0, 21, 21, 0.07, 4, true, true);
 
     this.reset = 1;
     this.shoot = 0; // to be sure bullet afer fire have to get off screen after user release shoot button
@@ -633,7 +633,7 @@ FireBall.prototype.draw = function (ctx) {
         this.switchSprite = true;
 
     } else if (!this.explosion && this.switchSprite) {
-        this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/blueBall1.png"), 0, 0, 20, 22, .07, 6, true, true);
+        this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/fireBall1.png"), 0, 0, 21, 21, .07, 4, true, true);
         this.switchSprite = false;
 
     }
@@ -646,7 +646,7 @@ FireBall.prototype.draw = function (ctx) {
 
 // flash bullet / rocket for now
 function Rocket(game) {
-    this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/rocketA.png"), 0, 0, 33, 116, .1, 6, true, true);
+    this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/rocketFull.png"), 0, 0, 33, 65, .1, 6, true, true);
     // this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/expl.png"), 0, 0, 65, 81, .1, 5, true, true);
 
     this.reset = 1;
@@ -714,11 +714,11 @@ Rocket.prototype.update = function () {
             this.reset = 0;
         }
         if (!this.explosion)
-            this.y -= 6;
+            this.y -= 10;
 
     } else if (this.y > -100 && !this.explosion) {
 
-        this.y -= 6;
+        this.y -= 10;
     }
 
     Entity.prototype.update.call(this);
@@ -731,347 +731,13 @@ Rocket.prototype.draw = function (ctx) {
         this.switchSprite = true;
 
     } else if (!this.explosion && this.switchSprite) {
-        this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/rocketA.png"), 0, 0, 33, 116, .1, 6, true, true);
+        this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/rocketFull.png"), 0, 0, 33, 65, .1, 6, true, true);
         this.switchSprite = false;
 
     }
 
     if (this.game.entities[3].alive && this.game.entities[this.game.entities.length - 2].alive) // no show after tank is destroyed
         this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0, 1, this.explosion, this.currentFrame);
-
-    Entity.prototype.draw.call(this);
-}
-
-// new Flash bullets
-// flash bullet / rocket for now
-function NewFlash(game, type) {
-    this.animation = new FlashAnimation(ASSET_MANAGER.getAsset("./img/bullet2.png"), 0, 0, 37, 100, 0.07, 6, true, true);
-    // this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/expl.png"), 0, 0, 65, 81, .1, 5, true, true);
-    this.type = type;
-    this.reset = 1;
-    this.shoot = 0; // to be sure bullet afer fire have to get off screen after user release shoot button
-    this.locate = false;
-    this.sin = 0;
-    this.cos = 0;
-    this.tempX = 0;
-    this.tempY = 0;
-    this.explosion = false;
-    this.time = 0;
-    this.stop = false;
-    this.add1 = true;
-
-    this.switchSprite = false;
-
-    Entity.call(this, game, 0, -800);
-}
-
-NewFlash.prototype = new Entity();
-NewFlash.prototype.constructor = NewFlash;
-
-NewFlash.prototype.update = function () {
-
-    if (this.y <= -100) {
-        this.reset = 1;
-        // this.locate = false;
-    }
-    var x; var y;
-    if (this.type === 1) {
-        x = this.game.entities[3].x - this.game.entities[this.game.entities.length - 4].x + 180;
-        y = this.game.entities[3].y - this.game.entities[this.game.entities.length - 4].y + 220;
-    } else if (this.type === 2) {
-        x = this.game.entities[3].x - this.game.entities[this.game.entities.length - 3].x + 180;
-        y = this.game.entities[3].y - this.game.entities[this.game.entities.length - 3].y + 220;
-    }
-    var distance = Math.sqrt(x * x + y * y);
-
-    // console.log(this.game.clockTick);
-    console.log(this.time);
-
-    if (distance < 50) {
-        this.explosion = true;
-        if (this.add1) {
-            //    this.game.entities[2].hpBar++;
-            this.add1 = false;
-        }
-        //this.done = false;
-
-    }
-    if (this.explosion)
-        this.time += this.game.clockTick;// integer result this.time = 0 when console output;
-    // if (this.game.shoot)
-    //    this.stop = false;
-
-    if (this.time > 1) {
-        this.explosion = false;
-        // this.x = this.game.entities[this.game.entities.length - 2].x + 56;
-        this.y = -600;// skip down after explosion
-        this.time = 0;
-        this.add1 = true;
-        // this.stop = true;
-
-    } else if (1 && this.time === 0) { // this.game.shoot replace by true for auto shooting
-
-
-        if (this.reset === 1) { // reset or initializing 1st bullet location base on main_craft.
-            if (this.type === 1) {
-                this.x = this.game.entities[this.game.entities.length - 2].x - 7;
-                this.y = this.game.entities[this.game.entities.length - 2].y - 5;
-            } else {
-                this.x = this.game.entities[this.game.entities.length - 2].x + 30;
-                this.y = this.game.entities[this.game.entities.length - 2].y - 5;
-            }
-
-            this.reset = 0;
-        }
-        if (!this.explosion)
-            this.y -= 10;
-
-    } else if (this.y > -100 && !this.explosion) {
-
-        this.y -= 10;
-    }
-
-    Entity.prototype.update.call(this);
-}
-
-NewFlash.prototype.draw = function (ctx) {
-
-    if (this.explosion && !this.switchSprite) {
-        this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/explosion2.png"), 0, 0, 65, 81, .05, 25, true, true);
-        this.switchSprite = true;
-
-    } else if (!this.explosion && this.switchSprite) {
-        this.animation = this.animation = new FlashAnimation(ASSET_MANAGER.getAsset("./img/bullet2.png"), 0, 0, 37, 100, 0.07, 6, true, true);
-        this.switchSprite = false;
-
-    }
-
-    if (this.game.entities[3].alive && this.game.entities[this.game.entities.length - 2].alive) // no show after tank is destroyed
-        this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0, 1, this.explosion, this.currentFrame);
-
-    Entity.prototype.draw.call(this);
-}
-
-// boss random bullets
-//function BossBullet(game, type) {
-//    this.animation = new FlashAnimation(ASSET_MANAGER.getAsset("./img/bullet2.png"), 0, 0, 37, 100, 0.07, 6, true, true);
-//    // this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/expl.png"), 0, 0, 65, 81, .1, 5, true, true);
-//    this.type = type;
-//    this.reset = 1;
-//    this.shoot = 0; // to be sure bullet afer fire have to get off screen after user release shoot button
-//    this.locate = false;
-//    this.sin = 0;
-//    this.cos = 0;
-//    this.tempX = 0;
-//    this.tempY = 0;
-//    this.explosion = false;
-//    this.time = 0;
-//    this.stop = false;
-//    this.add1 = true;
-
-//    this.switchSprite = false;
-
-//    Entity.call(this, game, 0, -800);
-//}
-
-//BossBullet.prototype = new Entity();
-//BossBullet.prototype.constructor = BossBullet;
-
-//BossBullet.prototype.update = function () {
-
-//    if (this.y <= -100) {
-//        this.reset = 1;
-//        // this.locate = false;
-//    }
-//    var x; var y;
-//    if (this.type === 1) {
-//        x = this.game.entities[3].x - this.game.entities[this.game.entities.length - 4].x + 180;
-//        y = this.game.entities[3].y - this.game.entities[this.game.entities.length - 4].y + 220;
-//    } else if (this.type === 2) {
-//        x = this.game.entities[3].x - this.game.entities[this.game.entities.length - 3].x + 180;
-//        y = this.game.entities[3].y - this.game.entities[this.game.entities.length - 3].y + 220;
-//    }
-//    var distance = Math.sqrt(x * x + y * y);
-
-//    // console.log(this.game.clockTick);
-//    console.log(this.time);
-
-//    if (distance < 50) {
-//        this.explosion = true;
-//        if (this.add1) {
-//            //    this.game.entities[2].hpBar++;
-//            this.add1 = false;
-//        }
-//        //this.done = false;
-
-//    }
-//    if (this.explosion)
-//        this.time += this.game.clockTick;// integer result this.time = 0 when console output;
-//    // if (this.game.shoot)
-//    //    this.stop = false;
-
-//    if (this.time > 1) {
-//        this.explosion = false;
-//        // this.x = this.game.entities[this.game.entities.length - 2].x + 56;
-//        this.y = -600;// skip down after explosion
-//        this.time = 0;
-//        this.add1 = true;
-//        // this.stop = true;
-
-//    } else if (1 && this.time === 0) { // this.game.shoot replace by true for auto shooting
-
-
-//        if (this.reset === 1) { // reset or initializing 1st bullet location base on main_craft.
-//            if (this.type === 1) {
-//                this.x = this.game.entities[this.game.entities.length - 2].x - 7;
-//                this.y = this.game.entities[this.game.entities.length - 2].y - 5;
-//            } else {
-//                this.x = this.game.entities[this.game.entities.length - 2].x + 30;
-//                this.y = this.game.entities[this.game.entities.length - 2].y - 5;
-//            }
-
-//            this.reset = 0;
-//        }
-//        if (!this.explosion)
-//            this.y -= 10;
-
-//    } else if (this.y > -100 && !this.explosion) {
-
-//        this.y -= 10;
-//    }
-
-//    Entity.prototype.update.call(this);
-//}
-
-//BossBullet.prototype.draw = function (ctx) {
-
-//    if (this.explosion && !this.switchSprite) {
-//        this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/explosion2.png"), 0, 0, 65, 81, .05, 25, true, true);
-//        this.switchSprite = true;
-
-//    } else if (!this.explosion && this.switchSprite) {
-//        this.animation = this.animation = new FlashAnimation(ASSET_MANAGER.getAsset("./img/bullet2.png"), 0, 0, 37, 100, 0.07, 6, true, true);
-//        this.switchSprite = false;
-
-//    }
-
-//    if (this.game.entities[3].alive && this.game.entities[this.game.entities.length - 2].alive) // no show after tank is destroyed
-//        this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0, 1, this.explosion, this.currentFrame);
-
-//    Entity.prototype.draw.call(this);
-//}
-
-function BossBullet(game, rangeX) {
-    this.animation = new BossBulletAnimation(ASSET_MANAGER.getAsset("./img/bossBullet.png"), 0, 0, 24, 26, 0.07, 2, true, true);
-
-    this.rangeX = rangeX;
-    this.reset = 1;
-    this.shoot = 0; // to be sure bullet afer fire have to get off screen after user release shoot button
-    this.locate = false;
-    this.sin = 0;
-    this.cos = 0;
-    this.tempX = 0;
-    this.tempY = 0;
-    this.activate = false;
-    this.random = 0;
-    this.explosion = false;
-    this.switchSprite = false;
-    this.time = 0;
-    this.add1 = true;
-
-    Entity.call(this, game, 0, -800);
-}
-
-BossBullet.prototype = new Entity();
-BossBullet.prototype.constructor = BossBullet;
-
-BossBullet.prototype.update = function () {
-
-    // impact detection
-    var x = this.x - this.game.entities[this.game.entities.length - 2].x;
-    var y = this.y - this.game.entities[this.game.entities.length - 2].y - 100;
-    var distance = Math.sqrt(x * x + y * y);
-
-    if (distance < 100) {
-        this.explosion = true;
-        if (this.add1) {
-            //  this.game.entities[3].hpBar += 0.4;
-            this.add1 = false;
-        }
-    }
-
-    if (this.explosion)
-        this.time += this.game.clockTick;// integer result this.time = 0 when console output;
-    // end impact detection
-
-    if (this.time > 1) {
-        this.explosion = false;
-        // this.x = this.game.entities[this.game.entities.length - 2].x + 56;
-        this.y = 800;// skip down after explosion
-        this.time = 0;
-        this.add1 = true;
-        // this.stop = true;
-
-    } else if (!this.explosion && this.game.entities[3].alive) {
-        // this.activate = true;
-
-        if (this.y >= 700 || this.y < -10 ) { // dont care aboute X now || this.x > 800 || this.x < -10) { // (this.y <= -100) 
-            this.reset = 1;
-            this.locate = false;
-            this.random = Math.random() * (15 - 5) + 5;
-
-        }
-
-        //if (!this.locate) {
-
-        //    tempX = this.game.entities[3].x - this.game.entities[this.game.entities.length - 2].x + 140;
-        //    tempY = this.game.entities[3].y - this.game.entities[this.game.entities.length - 2].y + 240;
-
-        //    var hypo = Math.sqrt(tempX * tempX + tempY * tempY);
-        //    this.sin = tempY / hypo;
-        //    this.cos = tempX / hypo;
-        //    this.locate = true;
-        //}
-        if (true) {
-            if (this.reset === 1) { // reset or initializing 1st bullet location base on boss.
-                this.x = this.game.entities[3].x + 180; // offset
-                this.y = this.game.entities[3].y + 280; // offset
-                this.reset = 0;
-            }
-            if (this.game.entities[this.game.entities.length - 2].alive) {
-                this.y += 3; // this.sin * this.random;
-                this.x += this.rangeX; //this.cos * this.random;
-            } else { this.y = -100; this.x = -100; }
-
-        } else if (this.y < 700) {
-            if (this.game.entities[this.game.entities.length - 2].alive) {
-               // this.y += this.sin * this.random;
-               // this.x += this.cos * this.random;
-                this.y += 3; // this.sin * this.random;
-                this.x += this.rangeX;
-
-            } else { this.y = -100; this.x = -100; }
-        }
-
-    } else if (!this.explosion && !this.game.entities[3].alive) { this.x = -25; this.y = -25; }
-
-    Entity.prototype.update.call(this);
-}
-
-BossBullet.prototype.draw = function (ctx) {
-
-    if (this.explosion && !this.switchSprite) {
-        this.animation = new FireBallAnimation(ASSET_MANAGER.getAsset("./img/explosion2.png"), 0, 0, 65, 81, .05, 25, true, true);
-        this.switchSprite = true;
-
-    } else if (!this.explosion && this.switchSprite) {
-        this.animation = new BossBulletAnimation(ASSET_MANAGER.getAsset("./img/bossBullet.png"), 0, 0, 24, 26, .07, 2, true, true);
-        this.switchSprite = false;
-
-    }
-
-    if (this.game.entities[3].alive && this.game.entities[this.game.entities.length - 2].alive) // no show after tank is destroyed)
-        this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0, 2, this.explosion);
 
     Entity.prototype.draw.call(this);
 }

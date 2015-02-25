@@ -15,11 +15,10 @@ ASSET_MANAGER.queueDownload("./img/enemy3.png");
 ASSET_MANAGER.queueDownload("./img/boss1.png");
 ASSET_MANAGER.queueDownload("./img/meteor_small.png");
 ASSET_MANAGER.queueDownload("./img/meteor.png");
-ASSET_MANAGER.queueDownload("./img/blueBall1.png");
+ASSET_MANAGER.queueDownload("./img/fireBall1.png");
 ASSET_MANAGER.queueDownload("./img/finalExplosion.png");
 ASSET_MANAGER.queueDownload("./img/explosion2.png");
-ASSET_MANAGER.queueDownload("./img/rocketA.png");
-ASSET_MANAGER.queueDownload("./img/bossBullet.png");
+ASSET_MANAGER.queueDownload("./img/rocketFull.png");
 
 ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");
@@ -52,11 +51,10 @@ ASSET_MANAGER.downloadAll(function () {
     var rock2 = new Metero(gameEngine);
 
     // bullets
-    var flash = new NewFlash(gameEngine, 1);
-    var flash2 = new NewFlash(gameEngine, 2);
+    var flash = new Flash(gameEngine, 1);
+    var flash2 = new Flash(gameEngine, 2);
     var fireBullet = new FireBall(gameEngine);
     var rocket = new Rocket(gameEngine);
- 
 
     // adding background
     gameEngine.addEntity(bg1);
@@ -73,15 +71,8 @@ ASSET_MANAGER.downloadAll(function () {
     gameEngine.addEntity(enemy);
     gameEngine.addEntity(enemy2);
     gameEngine.addEntity(enemy3);
+
     
-    var rangeX = -12;
-    for (var i = 0; i < 12; i++) {
-        var bossBullet = new BossBullet(gameEngine, rangeX);
-        rangeX += 2;
-        gameEngine.addEntity(bossBullet);
-    }
-
-
     gameEngine.addEntity(flash);
     gameEngine.addEntity(flash2);
     gameEngine.addEntity(mainCraft);
