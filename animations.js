@@ -1,4 +1,4 @@
-﻿
+
 // Main space-craft animation
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
     this.spriteSheet = spriteSheet;
@@ -346,5 +346,129 @@ AnimationBG.prototype.currentFrame = function () {
 }
 
 AnimationBG.prototype.isDone = function () {
+    return (this.elapsedTime >= this.totalTime);
+}
+
+// Fire ball bullet animation
+function FireBallAnimation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
+    this.spriteSheet = spriteSheet;
+    this.startX = startX;
+    this.startY = startY;
+    this.frameWidth = frameWidth;
+    this.frameDuration = frameDuration;
+    this.frameHeight = frameHeight;
+    this.frames = frames;
+    this.totalTime = frameDuration * frames;
+    this.elapsedTime = 0;
+    this.loop = loop;
+    this.reverse = reverse;
+    this.action = 0;
+}
+
+FireBallAnimation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy, type, explosion) {
+
+    var scaleBy = scaleBy || 1;
+    this.elapsedTime += tick;
+    if (this.loop) {
+        if (this.isDone()) {
+            this.elapsedTime = 0;
+        }
+    } else if (this.isDone()) {
+        return;
+    }
+    var index = 0;
+    var vindex = 0;
+    // pass current frame to rocket/explosion sprite
+    //  this.game.entities[4].currentFrame = this.currentFrame();
+
+    var frame = this.currentFrame();
+    if (explosion) {
+        // frame = 11 - this.currentFrame();
+        //if (frame > 13) {
+        //    frame = 25 - frame;
+        //}
+        index = frame % 25;
+        vindex = Math.floor(frame / 25);
+
+    } else if (type === 1) {
+        index = frame % 6;
+        vindex = Math.floor(frame / 6);
+    } else {
+        index = frame % 4;
+        vindex = Math.floor(frame / 4);
+    }
+
+    var locX = x;
+    var locY = y;
+    var offset = vindex === 0 ? this.startX : 0;
+    ctx.drawImage(this.spriteSheet,
+                  index * this.frameWidth + offset, vindex * this.frameHeight + this.startY,  // source from sheet
+                  this.frameWidth, this.frameHeight,
+                  locX, locY,
+                  this.frameWidth * scaleBy,
+                  this.frameHeight * scaleBy);
+}
+
+FireBallAnimation.prototype.currentFrame = function () {
+    return Math.floor(this.elapsedTime / this.frameDuration);
+}
+
+FireBallAnimation.prototype.isDone = function () {
+    return (this.elapsedTime >= this.totalTime);
+}
+
+// boss bullet animation for multi angle bullets
+function BossBulletAnimation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
+    this.spriteSheet = spriteSheet;
+    this.startX = startX;
+    this.startY = startY;
+    this.frameWidth = frameWidth;
+    this.frameDuration = frameDuration;
+    this.frameHeight = frameHeight;
+    this.frames = frames;
+    this.totalTime = frameDuration * frames;
+    this.elapsedTime = 0;
+    this.loop = loop;
+    this.reverse = reverse;
+    this.action = 0;
+}
+
+BossBulletAnimation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy, type, explosion) {
+
+    var scaleBy = scaleBy || 1;
+    this.elapsedTime += tick;
+    if (this.loop) {
+        if (this.isDone()) {
+            this.elapsedTime = 0;
+        }
+    } else if (this.isDone()) {
+        return;
+    }
+    var index = 0;
+    var vindex = 0;
+    // pass current frame to rocket/explosion sprite
+    //  this.game.entities[4].currentFrame = this.currentFrame();
+
+    var frame = this.currentFrame();
+    
+    index = frame % 2;
+    vindex = Math.floor(frame / 2);
+ 
+    var locX = x;
+    var locY = y;
+    var offset = vindex === 0 ? this.startX : 0;
+    ctx.drawImage(this.spriteSheet,
+                  index * this.frameWidth + offset, vindex * this.frameHeight + this.startY,  // source from sheet
+                  this.frameWidth, this.frameHeight,
+                  locX, locY,
+                  this.frameWidth * scaleBy,
+                  this.frameHeight * scaleBy);
+}
+
+BossBulletAnimation.prototype.currentFrame = function () {
+    return Math.floor(this.elapsedTime / this.frameDuration);
+}
+
+BossBulletAnimation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
