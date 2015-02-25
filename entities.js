@@ -269,27 +269,31 @@ Score.prototype.draw = function (ctx) {
 // boss
 function Boss(game) {
     this.animation = new AnimationB(ASSET_MANAGER.getAsset(
-    		"./img/boss1.png"), 0, 0, 374, 300, 0.1, 1, true, false);
+    		"./img/boss1.png"), 0, 0, 374, 300, 0.1, 1, true, false, false);
     this.right = true;
     this.up = true;
     this.alive = true;
 
-    Entity.call(this, game, 100, 0);
+    Entity.call(this, game, 100, -1000);
 }
 
 Boss.prototype = new Entity();
 Boss.prototype.constructor = Boss;
 
 Boss.prototype.update = function () {
-    if (this.x == -200) this.right = true;
-    if (this.x == 600) this.right = false;
-    if (this.y == -100) this.up = false;
-    if (this.y == 200) this.up = true;
-    if (this.right) this.x += 1;
-    else this.x -= 1;
-    if (this.up) this.y -= 1;
-    else this.y += 1;
-    Entity.prototype.update.call(this);
+	this.y += 1;
+	if (this.y > 0) { 
+	    if (this.x == -200) this.right = true;
+	    if (this.x == 600) this.right = false;
+	    if (this.y == -100) this.up = false;
+	    if (this.y == 200) this.up = true;
+	    if (this.right) this.x += 1;
+	    else this.x -= 1;
+	    if (this.up) this.y -= 1;
+	    else this.y += 1;
+	}   
+	Entity.prototype.update.call(this);
+	
 }
 
 Boss.prototype.draw = function (ctx) {

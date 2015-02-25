@@ -236,7 +236,7 @@ RocksAnimation.prototype.isDone = function () {
 
 // Boss animation
 function AnimationB(spriteSheet, startX, startY, frameWidth, frameHeight,
-		           frameDuration, frames, loop, reverse) {
+		           frameDuration, frames, loop, reverse, start) {
     this.spriteSheet = spriteSheet;
     this.startX = startX;
     this.startY = startY;
@@ -248,17 +248,23 @@ function AnimationB(spriteSheet, startX, startY, frameWidth, frameHeight,
     this.elapsedTime = 0;
     this.loop = loop;
     this.reverse = reverse;
+    this.start = false;
+    this.time = 0;
 }
 
 AnimationB.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) {
     var scaleBy = scaleBy || 1;
     this.elapsedTime += tick;
-    if (this.loop) {
-        if (this.isDone()) {
-            this.elapsedTime = 0;
-        }
-    } else if (this.isDone()) {
-        return;
+    this.time += tick;
+    if (this.time > 1) this.start = true;
+    if (this.start) {
+	    if (this.loop) {
+	        if (this.isDone()) {
+	            this.elapsedTime = 0;
+	        }
+	    } else if (this.isDone()) {
+	        return;
+	    }
     }
     var index = this.reverse ? this.frames - this.currentFrame() - 1 :
     	                       this.currentFrame();
