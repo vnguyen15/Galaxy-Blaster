@@ -24,7 +24,6 @@ ASSET_MANAGER.downloadAll(function () {
     var ctx = canvas.getContext('2d');
 
     var gameEngine = new GameEngine();
-
     
     //var bg = new Background(gameEngine);
     var score = new Score(gameEngine);
@@ -68,7 +67,9 @@ ASSET_MANAGER.downloadAll(function () {
     gameEngine.addEntity(flash2);
     gameEngine.addEntity(mainCraft);
     gameEngine.addEntity(score);
-
+     
     gameEngine.init(ctx);
+    
     gameEngine.start();
+   
 });

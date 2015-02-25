@@ -42,6 +42,8 @@ function GameEngine() {
     this.down = null;
     this.lastKeypressTime = 0;
     this.shoot = null;
+    this.score = 0;
+    this.hp = 100;
 }
 
 GameEngine.prototype.init = function (ctx) {
@@ -69,8 +71,8 @@ GameEngine.prototype.startInput = function () {
     this.ctx.canvas.addEventListener("keydown", function (e) {
         // if (String.fromCharCode(e.which) === ' ') that.space = true;
         var key = e.keyCode;
-        if (key === 38) that.space = true;
-        if (key === 37) that.left = true;
+        if (key === 38) {that.space = true; that.hp = that.hp -20;}
+        if (key === 37) that.left = true; 
         if (key === 39) that.right = true;
         if (key === 40) that.down = true;
         if (key === 83) that.shoot = true;
@@ -127,6 +129,7 @@ GameEngine.prototype.update = function () {
             this.entities.splice(i, 1);
         }
     }
+    
 }
 
 GameEngine.prototype.loop = function () {
@@ -147,6 +150,7 @@ function Entity(game, x, y) {
     this.y = y;
     this.removeFromWorld = false;
 }
+
 
 Entity.prototype.update = function () {
 }
