@@ -35,6 +35,43 @@ Metero.prototype.draw = function (ctx) {
     Entity.prototype.draw.call(this);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// meteor "small rocks"
+function SmallMetero(game) {
+    this.animation = new RocksAnimation(ASSET_MANAGER.getAsset("./img/meteor_small.png"), 0, 0, 30, 30, .10, 56, true, true);
+    this.radius = 30;
+    var newX = Math.random() * 800;
+    var newY = 0;
+    Entity.call(this, game, newX, newY);
+}
+
+SmallMetero.prototype = new Entity();
+SmallMetero.prototype.constructor = SmallMetero;
+
+SmallMetero.prototype.update = function () {
+
+    this.y += 10;
+
+    if (this.y > 600) {
+	this.x += 100;
+        this.y = 0;
+
+    }
+    
+    if (this.x > 800) {
+        this.x = Math.random() * 800;
+        this.y = 0;
+    }
+    Entity.prototype.update.call(this);
+}
+
+SmallMetero.prototype.draw = function (ctx) {
+
+    this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+
+    Entity.prototype.draw.call(this);
+}
+///////////////////////////////////////////////////////////////////////////////////////////
 
 // create enemy1.
 function Enemy(game) {

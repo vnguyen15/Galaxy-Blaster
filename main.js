@@ -50,13 +50,14 @@ ASSET_MANAGER.downloadAll(function () {
     // rocks
     var rock1 = new Metero(gameEngine);
     var rock2 = new Metero(gameEngine);
-
+    var smallRock1 = new SmallMetero(gameEngine);
+    var smallRock2 = new SmallMetero(gameEngine);
     // bullets
     var flash = new NewFlash(gameEngine, 1);
     var flash2 = new NewFlash(gameEngine, 2);
     var fireBullet = new FireBall(gameEngine);
     var rocket = new Rocket(gameEngine);
- 
+   
 
     // adding background
     gameEngine.addEntity(bg1);
@@ -86,6 +87,8 @@ ASSET_MANAGER.downloadAll(function () {
     gameEngine.addEntity(flash2);
     gameEngine.addEntity(mainCraft);
     gameEngine.addEntity(score);
+    //gameEngine.addEntity(smallRock1);
+    //gameEngine.addEntity(smallRock2);
      
     gameEngine.init(ctx);
     
