@@ -29,6 +29,8 @@ ASSET_MANAGER.downloadAll(function () {
     var ctx = canvas.getContext('2d');
 
     var gameEngine = new GameEngine();
+    var snd = new Audio("./sounds/bg1.mp3"); // buffers automatically when created
+    snd.play();
     
     //var bg = new Background(gameEngine);
     var score = new Score(gameEngine);
